@@ -1,0 +1,93 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">Add New Book</h4>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="onSubmit()" #bookForm="ngForm">
+            
+            <div class="mb-3">
+              <label for="isbn" class="form-label">ISBN *</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="isbn"
+                name="isbn"
+                [(ngModel)]="book.isbn" 
+                required
+                #isbn="ngModel">
+              <div *ngIf="isbn.invalid && isbn.touched" class="text-danger">
+                ISBN is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="title" class="form-label">Title *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="title"
+                name="title"
+                [(ngModel)]="book.title" 
+                required
+                #title="ngModel">
+              <div *ngIf="title.invalid && title.touched" class="text-danger">
+                Title is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="author" class="form-label">Author *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="author"
+                name="author"
+                [(ngModel)]="book.author" 
+                required
+                #author="ngModel">
+              <div *ngIf="author.invalid && author.touched" class="text-danger">
+                Author is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="publicationYear" class="form-label">Publication Year *</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="publicationYear"
+                name="publicationYear"
+                [(ngModel)]="book.publicationYear" 
+                required
+                #publicationYear="ngModel">
+              <div *ngIf="publicationYear.invalid && publicationYear.touched" class="text-danger">
+                Publication Year is required
+              </div>
+            </div>
+
+            <div *ngIf="error" class="alert alert-danger">
+              {{ error }}
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-secondary" (click)="cancel()">
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary" 
+                [disabled]="loading || bookForm.invalid">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ loading ? 'Adding...' : 'Add Book' }}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

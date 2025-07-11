@@ -1,0 +1,156 @@
+<div class="container">
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <div class="navbar-content">
+      <a href="#" class="navbar-brand">📚 Book Management System</a>
+      <div class="navbar-nav">
+        <a class="nav-link btn btn-success" routerLink="/books/add">
+          <i class="fas fa-plus"></i> Add New Book
+        </a>
+        <a class="nav-link btn btn-secondary" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Header Section -->
+    <div class="text-center mb-4">
+      <h1><i class="fas fa-book"></i> Your Digital Library</h1>
+      <p style="color: #7f8c8d; font-size: 1.1rem;">Manage your book collection with ease</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading">
+      <div class="spinner"></div>
+      <p style="margin-top: 20px; color: #667eea; font-weight: 500;">Loading your books...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="error && !loading" class="alert alert-danger">
+      <i class="fas fa-exclamation-triangle"></i> {{ error }}
+      <button class="btn btn-sm btn-success mt-2" (click)="loadBooks()">
+        <i class="fas fa-sync-alt"></i> Try Again
+      </button>
+    </div>
+
+    <!-- Success State - Books Content -->
+    <div *ngIf="!loading && !error">
+      <!-- Empty State -->
+      <div *ngIf="books.length === 0" class="text-center" style="padding: 60px 20px;">
+        <i class="fas fa-book-open" style="font-size: 4rem; color: #bdc3c7; margin-bottom: 20px;"></i>
+        <h3 style="color: #7f8c8d; margin-bottom: 15px;">No Books Found</h3>
+        <p style="color: #95a5a6; margin-bottom: 30px;">Start building your digital library by adding your first book!</p>
+        <a class="btn btn-success" routerLink="/books/add">
+          <i class="fas fa-plus"></i> Add Your First Book
+        </a>
+      </div>
+      
+      <!-- Books Grid -->
+      <div *ngIf="books.length > 0">
+        <!-- Statistics -->
+        <div class="card mb-4" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white;">
+          <div class="card-header" style="background: transparent; border: none;">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h4 class="mb-1"><i class="fas fa-chart-bar"></i> Library Statistics</h4>
+                <p class="mb-0">Your collection overview</p>
+              </div>
+              <div class="text-right">
+                <h2 class="mb-0">{{ books.length }}</h2>
+                <small>Total Books</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- View Toggle -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3><i class="fas fa-list"></i> Your Books</h3>
+          <div class="d-flex gap-2">
+            <button class="btn btn-small" [class.btn-primary]="viewMode === 'grid'" [class.btn-secondary]="viewMode !== 'grid'" (click)="viewMode = 'grid'">
+              <i class="fas fa-th"></i> Grid
+            </button>
+            <button class="btn btn-small" [class.btn-primary]="viewMode === 'table'" [class.btn-secondary]="viewMode !== 'table'" (click)="viewMode = 'table'">
+              <i class="fas fa-list"></i> Table
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid View -->
+        <div *ngIf="viewMode === 'grid'" class="book-grid">
+          <div *ngFor="let book of books" class="book-item">
+            <div class="book-title">{{ book.title }}</div>
+            <div class="book-author">by {{ book.author }}</div>
+            <div class="book-year">Published: {{ book.publicationYear }}</div>
+            <div class="book-isbn">ISBN: {{ book.isbn }}</div>
+            <div class="book-actions">
+              <button class="btn btn-small btn-success" 
+                      [routerLink]="['/books/detail', book.isbn]"
+                      title="View Details">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-small" 
+                      [routerLink]="['/books/edit', book.isbn]"
+                      title="Edit Book">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-small btn-danger" 
+                      (click)="deleteBook(book.isbn)"
+                      title="Delete Book">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table View -->
+        <div *ngIf="viewMode === 'table'" class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th><i class="fas fa-barcode"></i> ISBN</th>
+                <th><i class="fas fa-book"></i> Title</th>
+                <th><i class="fas fa-user"></i> Author</th>
+                <th><i class="fas fa-calendar"></i> Year</th>
+                <th><i class="fas fa-cog"></i> Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let book of books">
+                <td>
+                  <code>{{ book.isbn }}</code>
+                </td>
+                <td>
+                  <strong>{{ book.title }}</strong>
+                </td>
+                <td>{{ book.author }}</td>
+                <td>{{ book.publicationYear }}</td>
+                <td>
+                  <div class="d-flex gap-1">
+                    <button class="btn btn-small btn-success" 
+                            [routerLink]="['/books/detail', book.isbn]"
+                            title="View Details">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-small" 
+                            [routerLink]="['/books/edit', book.isbn]"
+                            title="Edit Book">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-small btn-danger" 
+                            (click)="deleteBook(book.isbn)"
+                            title="Delete Book">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

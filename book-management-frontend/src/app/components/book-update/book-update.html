@@ -1,0 +1,112 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h4 class="mb-0">Edit Book - ISBN: {{ isbn }}</h4>
+        </div>
+        <div class="card-body">
+          
+          <!-- Debug Info -->
+          <div class="alert alert-info" style="font-size: 12px;">
+            <strong>Debug:</strong> 
+            LoadingBook: {{ loadingBook }} | 
+            Error: {{ error || 'none' }} | 
+            Book Title: {{ book.title || 'empty' }} |
+            Show Form: {{ !loadingBook && book.title }}
+          </div>
+
+          <!-- Loading state for fetching book details -->
+          <div *ngIf="loadingBook" class="text-center">
+            <div class="spinner-border" role="status">
+              <span class="visually-hidden">Loading book details...</span>
+            </div>
+            <p>Loading book details...</p>
+          </div>
+
+          <!-- Error state -->
+          <div *ngIf="error && !loadingBook" class="alert alert-danger">
+            {{ error }}
+            <button class="btn btn-sm btn-primary ms-2" (click)="loadBook()">
+              Retry
+            </button>
+          </div>
+
+          <!-- Edit form - simplified condition -->
+          <form *ngIf="!loadingBook && !error && book.title" (ngSubmit)="onSubmit()" #bookForm="ngForm">
+            
+            <div class="mb-3">
+              <label for="isbn" class="form-label">ISBN (Read-only)</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="isbn"
+                [value]="book.isbn" 
+                readonly
+                disabled>
+            </div>
+
+            <div class="mb-3">
+              <label for="title" class="form-label">Title *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="title"
+                name="title"
+                [(ngModel)]="book.title" 
+                required
+                #title="ngModel">
+              <div *ngIf="title.invalid && title.touched" class="text-danger">
+                Title is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="author" class="form-label">Author *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="author"
+                name="author"
+                [(ngModel)]="book.author" 
+                required
+                #author="ngModel">
+              <div *ngIf="author.invalid && author.touched" class="text-danger">
+                Author is required
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="publicationYear" class="form-label">Publication Year *</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="publicationYear"
+                name="publicationYear"
+                [(ngModel)]="book.publicationYear" 
+                required
+                #publicationYear="ngModel">
+              <div *ngIf="publicationYear.invalid && publicationYear.touched" class="text-danger">
+                Publication Year is required
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-secondary" (click)="cancel()">
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary" 
+                [disabled]="loading || bookForm.invalid">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ loading ? 'Updating...' : 'Update Book' }}
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
